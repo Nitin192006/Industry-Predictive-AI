@@ -23,15 +23,14 @@ st.markdown("""
 st.title("⚙️ Equipment Health Analytics Command Center")
 st.markdown("Real-time Multimodal Fusion Engine integrating Sensor Telemetry and Thermal Imaging.")
 
+# =========================================================
+# Load the model correctly as state_dict
+# =========================================================
 @st.cache_resource
 def load_production_model():
     model = HybridPredictiveMaintenance()
     model.load_state_dict(
-        torch.load(
-            'models/hybrid_production_weights.pth',
-            map_location=torch.device('cpu'),
-            weights_only=False
-        )
+        torch.load('models/hybrid_production_weights.pth', map_location=torch.device('cpu'))
     )
     model.eval()
     return model
@@ -42,6 +41,9 @@ try:
 except Exception as e:
     st.error(f"Model loading failed: {e}")
 
+# =========================================================
+# Sidebar for data upload
+# =========================================================
 with st.sidebar:
     st.header("Data Ingestion Gateway")
     st.info("Upload the AI4I formatted sensor CSV and an accompanying thermal image.")
@@ -49,10 +51,14 @@ with st.sidebar:
     image_file = st.file_uploader("Upload Component Thermal Scan", type=["jpg", "png", "jpeg"])
     analyze_btn = st.button("Initialize Deep Scan", use_container_width=True, type="primary")
 
+# =========================================================
+# Main inference
+# =========================================================
 if analyze_btn and sensor_file and image_file:
     df = pd.read_csv(sensor_file)
     sensor_cols = ['Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]',
                    'Torque [Nm]', 'Tool wear [min]']
+    
     missing_cols = [col for col in sensor_cols if col not in df.columns]
     if missing_cols:
         st.error(f"Missing columns: {missing_cols}")
@@ -60,8 +66,12 @@ if analyze_btn and sensor_file and image_file:
     if len(df) < 10:
         st.error("CSV must contain at least 10 rows.")
         st.stop()
+    
+    # Sensor tensor
     sequence = df[sensor_cols].tail(10).values
     sensor_tensor = torch.tensor(sequence, dtype=torch.float32).unsqueeze(0)
+    
+    # Image tensor
     image = Image.open(image_file).convert('L')
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -69,22 +79,28 @@ if analyze_btn and sensor_file and image_file:
         transforms.Normalize(mean=[0.5], std=[0.5])
     ])
     image_tensor = transform(image).unsqueeze(0)
+    
+    # Model inference
     with st.spinner('Neural networks aligning modalities...'):
         with torch.no_grad():
             outputs = model(sensor_tensor, image_tensor)
             probabilities = torch.nn.functional.softmax(outputs, dim=1)
             failure_prob = probabilities[0][1].item() * 100
+    
+    # Dashboard
     st.divider()
     col1, col2, col3 = st.columns(3)
     status_class = "metric-box" if failure_prob > 50 else "metric-box-safe"
     status_text = "CRITICAL FAILURE IMMINENT" if failure_prob > 50 else "NOMINAL OPERATIONS"
     action_text = "INITIATE EMERGENCY SHUTDOWN" if failure_prob > 50 else "CONTINUE PRODUCTION"
+    
     with col1:
         st.markdown(f"<div class='{status_class}'><h4>System Status</h4><h2>{status_text}</h2></div>", unsafe_allow_html=True)
     with col2:
         st.markdown(f"<div class='{status_class}'><h4>Anomaly Probability</h4><h2>{failure_prob:.2f}%</h2></div>", unsafe_allow_html=True)
     with col3:
         st.markdown(f"<div class='{status_class}'><h4>Maintenance Directive</h4><h2>{action_text}</h2></div>", unsafe_allow_html=True)
+    
     st.divider()
     viz1, viz2 = st.columns([2, 1])
     with viz1:
