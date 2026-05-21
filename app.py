@@ -79,7 +79,12 @@ def load_production_model():
 
     return model
 
-model = load_production_model()
+model = None
+
+try:
+    model = load_production_model()
+except Exception as e:
+    st.error(f"Model loading failed: {e}")
 
 # =========================================================
 # SIDEBAR
