@@ -42,9 +42,9 @@ def load_production_model():
     
     # Download model from HF Hub
     model_file = hf_hub_download(
-        repo_id="YOUR_USERNAME/hybrid_production_weights",  # replace with your HF model repo
+        repo_id="Nitin190606/hybrid_production_weights",
         filename="hybrid_production_weights.pth",
-        use_auth_token=True  # required if model repo is private
+        use_auth_token=True
     )
     
     model.load_state_dict(torch.load(model_file, map_location=torch.device('cpu')))
