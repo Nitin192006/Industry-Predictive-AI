@@ -81,11 +81,10 @@ def load_production_model():
 
 model = None
 
-'''try:
+try:
     model = load_production_model()
 except Exception as e:
-    st.error(f"Model loading failed: {e}")'''
-st.write("App started successfully")
+    st.error(f"Model loading failed: {e}")
 
 # =========================================================
 # SIDEBAR
