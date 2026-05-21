@@ -1,11 +1,41 @@
-pycache/
+# =========================
+# Python cache & compiled files
+# =========================
+__pycache__/
 *.pyc
 *.pyo
+*.pyd
 
+# =========================
+# Jupyter checkpoints
+# =========================
+.ipynb_checkpoints
+
+# =========================
+# Operating system files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Virtual environments
+# =========================
 industry_ai/
 venv/
 env/
-miniconda3/
 
-.DS_Store
-Thumbs.db
+# =========================
+# Streamlit temporary folders
+# =========================
+.streamlit/
+
+# =========================
+# Hugging Face / LFS cleanup
+# =========================
+# Remove LFS and HF-specific files
+.gitattributes

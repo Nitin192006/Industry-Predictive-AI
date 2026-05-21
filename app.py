@@ -4,7 +4,6 @@ import pandas as pd
 from PIL import Image
 import torchvision.transforms as transforms
 import plotly.graph_objects as go
-from huggingface_hub import hf_hub_download
 from src.model import HybridPredictiveMaintenance
 
 # =========================================================
@@ -34,20 +33,14 @@ st.title("⚙️ Equipment Health Analytics Command Center")
 st.markdown("Real-time Multimodal Fusion Engine integrating Sensor Telemetry and Thermal Imaging.")
 
 # =========================================================
-# LOAD MODEL FROM HUGGING FACE HUB
+# LOAD MODEL LOCALLY
 # =========================================================
 @st.cache_resource
 def load_production_model():
     model = HybridPredictiveMaintenance()
-    
-    # Download model from HF Hub
-    model_file = hf_hub_download(
-        repo_id="Nitin190606/hybrid_production_weights",
-        filename="hybrid_production_weights.pth",
-        use_auth_token=True
+    model.load_state_dict(
+        torch.load('models/hybrid_production_weights.pth', map_location=torch.device('cpu'))
     )
-    
-    model.load_state_dict(torch.load(model_file, map_location=torch.device('cpu')))
     model.eval()
     return model
 
