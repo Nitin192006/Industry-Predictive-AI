@@ -1,8 +1,12 @@
+streamlit==1.25.0
+torch
+torchvision
 pandas==2.1.0
 numpy==1.25.2
 Pillow==10.0.0
-streamlit==1.25.0
 plotly==5.16.1
-torch
-torchvision
+pygments==2.20.0
+rich==15.0.0
+markdown-it-py==4.2.0
+mdurl==0.1.2
 --extra-index-url https://download.pytorch.org/whl/cpu
