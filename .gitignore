@@ -1,0 +1,11 @@
+pycache/
+*.pyc
+*.pyo
+
+industry_ai/
+venv/
+env/
+miniconda3/
+
+.DS_Store
+Thumbs.db
