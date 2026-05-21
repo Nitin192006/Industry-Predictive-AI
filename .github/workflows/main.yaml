@@ -1,4 +1,4 @@
-name: Deploy Industry 4.0 App to Hugging Face
+name: Deploy Industry App to Hugging Face
 
 on:
   push:
@@ -12,11 +12,12 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 
-          lfs: true 
-      
+          fetch-depth: 0
+          lfs: true
+
       - name: Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git push --force https://Nitin190606:$HF_TOKEN@huggingface.co/spaces/Nitin190606/Industry-Predictive-AI main
+          git remote add hf https://Nitin190606:$HF_TOKEN@huggingface.co/spaces/Nitin190606/Industry-Predictive-AI || true
+          git push --force hf main
