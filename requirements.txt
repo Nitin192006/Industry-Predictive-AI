@@ -1,6 +1,6 @@
 streamlit>=1.29.0
-torch
-torchvision
+torch==2.5.1
+torchvision==0.20.1
 pandas
 numpy
 Pillow
